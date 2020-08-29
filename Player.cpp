@@ -8,12 +8,12 @@ void Player::teleport(int x, int y) {
 }
 
 void Player::move(int dx, int dy) {
-	pos += sf::Vector2f(dx, dy) * BlockSize;
-	image.setPosition(pos);
+	pos += sf::Vector2f(dx * 16.0, dy * 16.0);
+	//image.setPosition(pos);
 }
 
 Player::Player(int x, int y) {
-	image = sf::CircleShape(BlockSize/2, 64);
+	image = sf::CircleShape(16 / 2, 64);
 	image.setFillColor(sf::Color(254, 220, 86));
 	image.setOutlineThickness(1);
 	image.setOutlineColor(sf::Color(196, 145, 2));
@@ -22,5 +22,12 @@ Player::Player(int x, int y) {
 }
 
 void Player::draw(sf::RenderTarget& window) {
+	image.setPosition(pos);
 	window.draw(image);
+}
+
+sf::Vector2f graivty = sf::Vector2f(0, 0.5);
+void Player::update() {
+	velocity += graivty;
+	pos += velocity;
 }

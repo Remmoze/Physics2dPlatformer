@@ -6,8 +6,13 @@
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
 
-    Player player(0, 0);
-    World world(25, 25);
+    Player player(150, 150);
+    World world;
+
+    sf::Clock clock;
+    sf::Time curtime = clock.getElapsedTime();
+    sf::Time prevtime = clock.getElapsedTime();
+    sf::Time deltatime = curtime - prevtime;
 
     while(window.isOpen()) {
         sf::Event event;
@@ -16,18 +21,31 @@ int main() {
                 window.close();
             if(event.type == sf::Event::KeyPressed) {
                 switch(event.key.code) {
-                    case sf::Keyboard::W: player.move(0, -1); break;
-                    case sf::Keyboard::A: player.move(-1, 0); break;
-                    case sf::Keyboard::S: player.move(0,  1); break;
-                    case sf::Keyboard::D: player.move(1,  0); break;
-                    case sf::Keyboard::E: {
-                        world.placeBlock(1, player.pos.x/BlockSize, player.pos.y / BlockSize);
-                    }
+                    case sf::Keyboard::W: player.velocity += sf::Vector2f(0, -1); break;
+                    case sf::Keyboard::A: player.velocity += sf::Vector2f(-1, 0); break;
+                    case sf::Keyboard::S: player.velocity += sf::Vector2f(0,  1); break;
+                    case sf::Keyboard::D: player.velocity += sf::Vector2f(1,  0); break;
+                    case sf::Keyboard::F1: {
+                        sf::RectangleShape* rect = new sf::RectangleShape(sf::Vector2f(16, 16));
+                        rect->setPosition(player.pos);
+                        world.AddShape(rect);
+                    }; break;
+                    case sf::Keyboard::F2: {
+                        sf::CircleShape* circle = new sf::CircleShape(12);
+                        circle->setPosition(player.pos);
+                        world.AddShape(circle);
+                    }; break;
                 }
             }
-            if(event.type == sf::Event::MouseButtonPressed) {
-                world.placeBlock(event.mouseButton.button == sf::Mouse::Left, event.mouseButton.x / BlockSize, event.mouseButton.y / BlockSize);
-            }
+        }
+
+        curtime = clock.getElapsedTime();
+        deltatime += curtime - prevtime;
+        prevtime = curtime;
+
+        while(deltatime > sf::milliseconds(1000 / 60)) {
+            player.update();
+            deltatime -= sf::milliseconds(1000 / 60);
         }
 
         window.clear();

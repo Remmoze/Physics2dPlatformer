@@ -5,15 +5,11 @@
 class World
 {
 public:
-	int Width;
-	int Height;
-	int* grid;
+	World();
 
-	World(int width, int height);
-
+	void AddShape(sf::Shape* shape);
 	void draw(sf::RenderTarget& window);
-
-	void placeBlock(int type, int x, int y);
-
+private:
+	std::vector<sf::Shape*> shapes;
 };
 
